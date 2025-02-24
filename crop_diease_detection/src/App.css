@@ -37,7 +37,7 @@
   padding: 10px 20px;
   background: var(--buttonBackground);
   color: #fff;
-  border: none;
+  border: 1pxridgevar (--buttonBackground);
   border-radius: 5px;
   cursor: pointer;
 }
