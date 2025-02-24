@@ -6,6 +6,11 @@ import Confetti from "react-confetti";
 import "./App.css"; // Import the CSS file
 import { lightTheme, darkTheme } from "./Theme";
 
+// Import small images for the "How to Use" section
+import step1Image from "./step1.png"; // Example image for step 1
+import step2Image from "./step2.png"; // Example image for step 2
+import step3Image from "./step3.png"; // Example image for step 3
+
 const App = () => {
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -18,6 +23,8 @@ const App = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [history, setHistory] = useState([]);
   const [currentTip, setCurrentTip] = useState("");
+  const [showHowToUse, setShowHowToUse] = useState(false); // State to toggle "How to Use" section
+  const [showCelebration, setShowCelebration] = useState(false); // State to control celebration animation
 
   const farmingTips = [
     "Did you know? Rotating crops can help prevent soil-borne diseases.",
@@ -82,6 +89,8 @@ const App = () => {
 
       setPrediction(response.data);
       setHistory((prev) => [...prev, response.data]);
+      setShowCelebration(true); // Trigger celebration animation
+      setTimeout(() => setShowCelebration(false), 5000); // Hide celebration after 5 seconds
     } catch (err) {
       setError("Failed to get prediction. Please try again.");
     } finally {
@@ -138,6 +147,10 @@ const App = () => {
     setCurrentTip(newTip);
   };
 
+  const toggleHowToUse = () => {
+    setShowHowToUse(!showHowToUse);
+  };
+
   // Apply theme variables to the root element
   useEffect(() => {
     const root = document.documentElement;
@@ -164,11 +177,23 @@ const App = () => {
             New Tip
           </button>
         </div>
-        <div className="help-section">
+        <button className="need-more-button" onClick={toggleHowToUse}>
+          {showHowToUse ? "Hide Instructions" : "Need More?"}
+        </button>
+        <div className={`how-to-use-section ${showHowToUse ? "slide-in" : ""}`}>
           <h3>How to Use</h3>
-          <p>1. Upload an image of a crop leaf.</p>
-          <p>2. Click 'Predict Disease' to analyze the image.</p>
-          <p>3. View the results and suggested treatments.</p>
+          <div className="step">
+            <img src={step1Image} alt="Step 1" className="step-image" />
+            <p>1. Upload an image of a crop leaf.</p>
+          </div>
+          <div className="step">
+            <img src={step2Image} alt="Step 2" className="step-image" />
+            <p>2. Click 'Predict Disease' to analyze the image.</p>
+          </div>
+          <div className="step">
+            <img src={step3Image} alt="Step 3" className="step-image" />
+            <p>3. View the results and suggested treatments.</p>
+          </div>
         </div>
         <div className="upload-container">
           <input
@@ -213,13 +238,9 @@ const App = () => {
 
         {prediction && (
           <>
-            <Confetti
-              width={window.innerWidth}
-              height={window.innerHeight}
-              recycle={false}
-            />
+            {showCelebration && <Confetti width={window.innerWidth} height={window.innerHeight} recycle={false} />}
             <div className="result-container fade-in">
-              <h2 className="result-title">Prediction Result</h2>
+              <h2 className="result-title">🎉 Prediction Successful! 🎉</h2>
               <p className="result-text">
                 <strong>Disease:</strong> {prediction.predicted_disease}
               </p>
@@ -231,8 +252,8 @@ const App = () => {
               </p>
               <div className="feedback-container">
                 <p>Was this prediction helpful?</p>
-                <button classname="button" onClick={() => handleFeedback(true)}>Yes</button>
-                <button  classname="button" onClick={() => handleFeedback(false)}>No</button>
+                <button onClick={() => handleFeedback(true)}>Yes</button>
+                <button onClick={() => handleFeedback(false)}>No</button>
               </div>
               <button className="share-button" onClick={handleShare}>
                 Share Results
@@ -258,7 +279,7 @@ const App = () => {
 
         <div className="learn-more">
           <h3>Learn More</h3>
-          <a href="https://example.com/crop-diseases" target="_blank" rel="noopener noreferrer">
+          <a href="https://eos.com/blog/crop-diseases/" target="_blank" rel="noopener noreferrer">
             Read about common crop diseases
           </a>
         </div>

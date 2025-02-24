@@ -281,3 +281,48 @@
 .fade-in {
   animation: fadeIn 0.5s ease-in;
 }
+
+.how-to-use-section {
+  position: fixed;
+  top: 0;
+  right: -400px;
+  width: 350px;
+  height: 100%;
+  background: var(--cardBackground);
+  box-shadow: -4px 0 15px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  transition: right 0.5s ease;
+  z-index: 1000;
+}
+
+.how-to-use-section.slide-in {
+  right: 0;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.step-image {
+  width: 50px;
+  height: 50px;
+  margin-right: 15px;
+  border-radius: 10px;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  display: none;
+}
+
+.how-to-use-section.slide-in + .overlay {
+  display: block;
+}
