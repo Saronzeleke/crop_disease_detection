@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import styled, { keyframes, ThemeProvider } from "styled-components";
 import { Cropper } from "react-cropper";
 import "cropperjs/dist/cropper.css";
-import { lightTheme, darkTheme } from "./Theme"; // Import themes
+import "./App.css"; 
+import { lightTheme, darkTheme } from "./Theme";
 
 const App = () => {
   const [file, setFile] = useState(null);
@@ -14,7 +14,7 @@ const App = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [croppedImage, setCroppedImage] = useState(null);
 
-  // Load dark mode preference from localStorage
+  
   useEffect(() => {
     const savedDarkMode = localStorage.getItem("darkMode") === "true";
     setDarkMode(savedDarkMode);
@@ -81,201 +81,78 @@ const App = () => {
     localStorage.setItem("darkMode", newDarkMode);
   };
 
+
+  useEffect(() => {
+    const root = document.documentElement;
+    const theme = darkMode ? darkTheme : lightTheme;
+    root.style.setProperty("--background", theme.background);
+    root.style.setProperty("--text", theme.text);
+    root.style.setProperty("--cardBackground", theme.cardBackground);
+    root.style.setProperty("--buttonBackground", theme.buttonBackground);
+    root.style.setProperty("--buttonHover", theme.buttonHover);
+  }, [darkMode]);
+
   return (
-    <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
-      <Container>
-        <Navbar>
-          <ToggleButton onClick={toggleDarkMode}>
-            {darkMode ? "🌞 Light Mode" : "🌙 Dark Mode"}
-          </ToggleButton>
-        </Navbar>
-        <Content>
-          <Title>Crop Disease Detection</Title>
-          <UploadContainer>
-            <FileInput type="file" accept="image/*" onChange={handleFileChange} />
-            {preview && (
-              <Cropper
-                src={preview}
-                style={{ height: 300, width: "100%" }}
-                aspectRatio={1}
-                guides={false}
-                crop={handleCrop}
-              />
-            )}
-            {croppedImage && (
-              <img src={croppedImage} alt="Cropped" style={{ marginTop: "20px", maxWidth: "100%" }} />
-            )}
-            <Button onClick={handleSubmit} disabled={loading}>
-              {loading ? <Spinner /> : "Predict Disease"}
-            </Button>
-            {file && (
-              <RemoveButton onClick={handleRemoveImage}>
-                Remove Image
-              </RemoveButton>
-            )}
-          </UploadContainer>
-
-          {prediction && (
-            <ResultContainer>
-              <ResultTitle>Prediction Result</ResultTitle>
-              <ResultText>
-                <strong>Disease:</strong> {prediction.predicted_disease}
-              </ResultText>
-              <ResultText>
-                <strong>Confidence:</strong> {(prediction.confidence * 100).toFixed(2)}%
-              </ResultText>
-              <ResultText>
-                <strong>Treatment:</strong> {prediction.treatment}
-              </ResultText>
-            </ResultContainer>
+    <div className="container">
+      <nav className="navbar">
+        <button className="toggle-button" onClick={toggleDarkMode}>
+          {darkMode ? "🌞 Light Mode" : "🌙 Dark Mode"}
+        </button>
+      </nav>
+      <div className="content">
+        <h1 className="title">Crop Disease Detection</h1>
+        <div className="upload-container">
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="file-input"
+          />
+          {preview && (
+            <Cropper
+              src={preview}
+              style={{ height: 300, width: "100%" }}
+              aspectRatio={1}
+              guides={false}
+              crop={handleCrop}
+            />
           )}
+          {croppedImage && (
+            <img
+              src={croppedImage}
+              alt="Cropped"
+              style={{ marginTop: "20px", maxWidth: "100%" }}
+            />
+          )}
+          <button className="button" onClick={handleSubmit} disabled={loading}>
+            {loading ? <div className="spinner" /> : "Predict Disease"}
+          </button>
+          {file && (
+            <button className="remove-button" onClick={handleRemoveImage}>
+              Remove Image
+            </button>
+          )}
+        </div>
 
-          {error && <ErrorText>{error}</ErrorText>}
-        </Content>
-      </Container>
-    </ThemeProvider>
+        {prediction && (
+          <div className="result-container">
+            <h2 className="result-title">Prediction Result</h2>
+            <p className="result-text">
+              <strong>Disease:</strong> {prediction.predicted_disease}
+            </p>
+            <p className="result-text">
+              <strong>Confidence:</strong> {(prediction.confidence * 100).toFixed(2)}%
+            </p>
+            <p className="result-text">
+              <strong>Treatment:</strong> {prediction.treatment}
+            </p>
+          </div>
+        )}
+
+        {error && <p className="error-text">{error}</p>}
+      </div>
+    </div>
   );
 };
 
 export default App;
-
-// Styled Components
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background: ${({ theme }) => theme.background};
-  color: ${({ theme }) => theme.text};
-`;
-
-const Navbar = styled.nav`
-  display: flex;
-  justify-content: flex-start;
-  padding: 20px;
-  background: ${({ theme }) => theme.cardBackground};
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-`;
-
-const Content = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  flex: 1;
-  padding: 20px;
-`;
-
-const Title = styled.h1`
-  font-size: 2.5rem;
-  margin-bottom: 20px;
-  text-align: center;
-  color: ${({ theme }) => theme.text};
-`;
-
-const ToggleButton = styled.button`
-  padding: 10px 20px;
-  background: ${({ theme }) => theme.buttonBackground};
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  &:hover {
-    background: ${({ theme }) => theme.buttonHover};
-  }
-`;
-
-const UploadContainer = styled.div`
-  background: ${({ theme }) => theme.cardBackground};
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  width: 100%;
-  max-width: 500px;
-`;
-
-const FileInput = styled.input`
-  margin: 20px 0;
-  padding: 10px;
-  border: 2px dashed #3498db;
-  border-radius: 10px;
-  width: 100%;
-  cursor: pointer;
-  &:hover {
-    border-color: #2980b9;
-  }
-`;
-
-const Button = styled.button`
-  padding: 12px 24px;
-  background: ${({ theme }) => theme.buttonBackground};
-  color: #fff;
-  border: none;
-  border-radius: 25px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background 0.3s ease;
-  &:hover {
-    background: ${({ theme }) => theme.buttonHover};
-  }
-  &:disabled {
-    background: #bdc3c7;
-    cursor: not-allowed;
-  }
-`;
-
-const RemoveButton = styled.button`
-  padding: 8px 16px;
-  background: #e74c3c;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 10px;
-  &:hover {
-    background: #c0392b;
-  }
-`;
-
-const spin = keyframes`
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-`;
-
-const Spinner = styled.div`
-  border: 4px solid rgba(0, 0, 0, 0.1);
-  border-left-color: #fff;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  animation: ${spin} 1s linear infinite;
-`;
-
-const ResultContainer = styled.div`
-  margin-top: 20px;
-  background: ${({ theme }) => theme.cardBackground};
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  width: 100%;
-  max-width: 500px;
-`;
-
-const ResultTitle = styled.h2`
-  font-size: 1.5rem;
-  margin-bottom: 10px;
-  color: ${({ theme }) => theme.text};
-`;
-
-const ResultText = styled.p`
-  margin: 5px 0;
-  font-size: 1.1rem;
-  color: ${({ theme }) => theme.text};
-`;
-
-const ErrorText = styled.p`
-  color: #e74c3c;
-  margin-top: 20px;
-  font-size: 1rem;
-`;

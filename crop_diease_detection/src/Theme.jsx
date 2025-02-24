@@ -1,4 +1,4 @@
-// Theme.jsx
+
 export const lightTheme = {
     background: "#f5f7fa",
     text: "#2c3e50",
