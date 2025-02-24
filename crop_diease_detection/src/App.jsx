@@ -3,22 +3,7 @@ import axios from "axios";
 import styled, { keyframes, ThemeProvider } from "styled-components";
 import { Cropper } from "react-cropper";
 import "cropperjs/dist/cropper.css";
-
-const lightTheme = {
-  background: "#f5f7fa",
-  text: "#2c3e50",
-  cardBackground: "#fff",
-  buttonBackground: "#3498db",
-  buttonHover: "#2980b9",
-};
-
-const darkTheme = {
-  background: "#2c3e50",
-  text: "#f5f7fa",
-  cardBackground: "#34495e",
-  buttonBackground: "#2980b9",
-  buttonHover: "#3498db",
-};
+import { lightTheme, darkTheme } from "./Theme"; // Import themes
 
 const App = () => {
   const [file, setFile] = useState(null);
@@ -29,6 +14,7 @@ const App = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [croppedImage, setCroppedImage] = useState(null);
 
+  // Load dark mode preference from localStorage
   useEffect(() => {
     const savedDarkMode = localStorage.getItem("darkMode") === "true";
     setDarkMode(savedDarkMode);
@@ -90,8 +76,9 @@ const App = () => {
   };
 
   const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-    localStorage.setItem("darkMode", !darkMode);
+    const newDarkMode = !darkMode;
+    setDarkMode(newDarkMode);
+    localStorage.setItem("darkMode", newDarkMode);
   };
 
   return (
@@ -176,13 +163,13 @@ const Content = styled.div`
   justify-content: center;
   flex: 1;
   padding: 20px;
-  width: 100%;
 `;
 
 const Title = styled.h1`
   font-size: 2.5rem;
   margin-bottom: 20px;
   text-align: center;
+  color: ${({ theme }) => theme.text};
 `;
 
 const ToggleButton = styled.button`
@@ -278,11 +265,13 @@ const ResultContainer = styled.div`
 const ResultTitle = styled.h2`
   font-size: 1.5rem;
   margin-bottom: 10px;
+  color: ${({ theme }) => theme.text};
 `;
 
 const ResultText = styled.p`
   margin: 5px 0;
   font-size: 1.1rem;
+  color: ${({ theme }) => theme.text};
 `;
 
 const ErrorText = styled.p`
