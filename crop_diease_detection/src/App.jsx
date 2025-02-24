@@ -275,7 +275,7 @@ const App = () => {
 
         <div className="learn-more">
           <h3>Learn More</h3>
-          <a href="https://example.com/crop-diseases" target="_blank" rel="noopener noreferrer">
+          <a href="https://eos.com/blog/crop-diseases/" target="_blank" rel="noopener noreferrer">
             Read about common crop diseases
           </a>
         </div>
