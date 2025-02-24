@@ -107,7 +107,7 @@ const App = () => {
     <div className="container">
       <nav className="navbar">
         <button className="toggle-button" onClick={toggleDarkMode}>
-          {darkMode ? "🌞 Light Mode" : "🌙 Dark Mode"}
+          {darkMode ? "🌞" : "🌙"}
         </button>
       </nav>
       <div className="content">
