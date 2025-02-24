@@ -29,7 +29,6 @@ const App = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [croppedImage, setCroppedImage] = useState(null);
 
-  // Load dark mode preference from localStorage
   useEffect(() => {
     const savedDarkMode = localStorage.getItem("darkMode") === "true";
     setDarkMode(savedDarkMode);
@@ -38,7 +37,6 @@ const App = () => {
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
-      // Check file size (5MB max)
       if (selectedFile.size > 5 * 1024 * 1024) {
         setError("File size exceeds the 5MB limit.");
         return;
@@ -93,7 +91,7 @@ const App = () => {
 
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
-    localStorage.setItem("darkMode", !darkMode); // Save preference to localStorage
+    localStorage.setItem("darkMode", !darkMode);
   };
 
   return (
@@ -178,6 +176,7 @@ const Content = styled.div`
   justify-content: center;
   flex: 1;
   padding: 20px;
+  width: 100%;
 `;
 
 const Title = styled.h1`
