@@ -3,7 +3,7 @@ import axios from "axios";
 import { Cropper } from "react-cropper";
 import "cropperjs/dist/cropper.css";
 import Confetti from "react-confetti";
-import "./App.css"; // Import the CSS file
+import "./App.css"; 
 import { lightTheme, darkTheme } from "./Theme";
 
 import step1Image from "./step1.png"; 
