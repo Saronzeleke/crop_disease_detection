@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Cropper } from "react-cropper";
 import "cropperjs/dist/cropper.css";
-import "./App.css"; 
+import "./App.css"; // Import the CSS file
 import { lightTheme, darkTheme } from "./Theme";
 
 const App = () => {
@@ -13,8 +13,17 @@ const App = () => {
   const [error, setError] = useState(null);
   const [darkMode, setDarkMode] = useState(false);
   const [croppedImage, setCroppedImage] = useState(null);
+  const [uploadCount, setUploadCount] = useState(0);
 
-  
+  const farmingTips = [
+    "Did you know? Rotating crops can help prevent soil-borne diseases.",
+    "Tip: Regularly inspect your plants for early signs of disease.",
+    "Fun Fact: Some plants release chemicals to repel pests naturally!",
+  ];
+
+  const randomTip = farmingTips[Math.floor(Math.random() * farmingTips.length)];
+
+  // Load dark mode preference from localStorage
   useEffect(() => {
     const savedDarkMode = localStorage.getItem("darkMode") === "true";
     setDarkMode(savedDarkMode);
@@ -31,6 +40,7 @@ const App = () => {
       setPreview(URL.createObjectURL(selectedFile));
       setPrediction(null);
       setError(null);
+      setUploadCount((prev) => prev + 1);
     }
   };
 
@@ -81,7 +91,7 @@ const App = () => {
     localStorage.setItem("darkMode", newDarkMode);
   };
 
-
+  // Apply theme variables to the root element
   useEffect(() => {
     const root = document.documentElement;
     const theme = darkMode ? darkTheme : lightTheme;
@@ -101,6 +111,9 @@ const App = () => {
       </nav>
       <div className="content">
         <h1 className="title">Crop Disease Detection</h1>
+        <div className="tip-container">
+          <p className="tip-text">{randomTip}</p>
+        </div>
         <div className="upload-container">
           <input
             type="file"
@@ -135,7 +148,7 @@ const App = () => {
         </div>
 
         {prediction && (
-          <div className="result-container">
+          <div className="result-container fade-in">
             <h2 className="result-title">Prediction Result</h2>
             <p className="result-text">
               <strong>Disease:</strong> {prediction.predicted_disease}
@@ -146,10 +159,17 @@ const App = () => {
             <p className="result-text">
               <strong>Treatment:</strong> {prediction.treatment}
             </p>
+            <p className="description">
+              {prediction.description || "No additional information available."}
+            </p>
           </div>
         )}
 
         {error && <p className="error-text">{error}</p>}
+
+        <div className="progress-container">
+          <p>You've analyzed {uploadCount} images so far. Keep it up!</p>
+        </div>
       </div>
     </div>
   );
