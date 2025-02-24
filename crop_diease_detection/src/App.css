@@ -326,3 +326,14 @@
 .how-to-use-section.slide-in + .overlay {
   display: block;
 }
+/* Upload Count Section */
+.upload-count {
+  margin-top: 20px;
+  font-size: 1.1rem;
+  text-align: center;
+  color: var(--text);
+}
+
+.upload-count strong {
+  color: var(--buttonBackground);
+}

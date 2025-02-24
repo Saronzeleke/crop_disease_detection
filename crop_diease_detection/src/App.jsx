@@ -6,10 +6,9 @@ import Confetti from "react-confetti";
 import "./App.css"; // Import the CSS file
 import { lightTheme, darkTheme } from "./Theme";
 
-// Import small images for the "How to Use" section
-import step1Image from "./step1.png"; // Example image for step 1
-import step2Image from "./step2.png"; // Example image for step 2
-import step3Image from "./step3.png"; // Example image for step 3
+import step1Image from "./step1.png"; 
+import step2Image from "./step2.png";
+import step3Image from "./step3.png"; 
 
 const App = () => {
   const [file, setFile] = useState(null);
@@ -19,12 +18,12 @@ const App = () => {
   const [error, setError] = useState(null);
   const [darkMode, setDarkMode] = useState(false);
   const [croppedImage, setCroppedImage] = useState(null);
-  const [uploadCount, setUploadCount] = useState(0);
+  const [uploadCount, setUploadCount] = useState(0); 
   const [uploadProgress, setUploadProgress] = useState(0);
   const [history, setHistory] = useState([]);
   const [currentTip, setCurrentTip] = useState("");
-  const [showHowToUse, setShowHowToUse] = useState(false); // State to toggle "How to Use" section
-  const [showCelebration, setShowCelebration] = useState(false); // State to control celebration animation
+  const [showHowToUse, setShowHowToUse] = useState(false); 
+  const [showCelebration, setShowCelebration] = useState(false); 
 
   const farmingTips = [
     "Did you know? Rotating crops can help prevent soil-borne diseases.",
@@ -32,7 +31,7 @@ const App = () => {
     "Fun Fact: Some plants release chemicals to repel pests naturally!",
   ];
 
-  // Load dark mode preference from localStorage
+
   useEffect(() => {
     const savedDarkMode = localStorage.getItem("darkMode") === "true";
     setDarkMode(savedDarkMode);
@@ -50,9 +49,9 @@ const App = () => {
       setPreview(URL.createObjectURL(selectedFile));
       setPrediction(null);
       setError(null);
-      setUploadCount((prev) => prev + 1);
+      setUploadCount((prev) => prev + 1); // Increment upload count
 
-      // Simulate upload progress
+     
       let progress = 0;
       const interval = setInterval(() => {
         progress += 10;
@@ -89,8 +88,8 @@ const App = () => {
 
       setPrediction(response.data);
       setHistory((prev) => [...prev, response.data]);
-      setShowCelebration(true); // Trigger celebration animation
-      setTimeout(() => setShowCelebration(false), 5000); // Hide celebration after 5 seconds
+      setShowCelebration(true); 
+      setTimeout(() => setShowCelebration(false), 5000); 
     } catch (err) {
       setError("Failed to get prediction. Please try again.");
     } finally {
@@ -140,6 +139,7 @@ const App = () => {
     setError(null);
     setHistory([]);
     setUploadProgress(0);
+    setUploadCount(0); 
   };
 
   const refreshTip = () => {
@@ -151,7 +151,6 @@ const App = () => {
     setShowHowToUse(!showHowToUse);
   };
 
-  // Apply theme variables to the root element
   useEffect(() => {
     const root = document.documentElement;
     const theme = darkMode ? darkTheme : lightTheme;
@@ -166,7 +165,7 @@ const App = () => {
     <div className="container">
       <nav className="navbar">
         <button className="toggle-button" onClick={toggleDarkMode} title="Switch to Dark Mode">
-          {darkMode ? "🌞 Light Mode" : "🌙 Dark Mode"}
+          {darkMode ? "🌞" : "🌙 "}
         </button>
       </nav>
       <div className="content">
@@ -180,21 +179,23 @@ const App = () => {
         <button className="need-more-button" onClick={toggleHowToUse}>
           {showHowToUse ? "Hide Instructions" : "Need More?"}
         </button>
-        <div className={`how-to-use-section ${showHowToUse ? "slide-in" : ""}`}>
-          <h3>How to Use</h3>
-          <div className="step">
-            <img src={step1Image} alt="Step 1" className="step-image" />
-            <p>1. Upload an image of a crop leaf.</p>
+        {showHowToUse && (
+          <div className="how-to-use-section fade-in">
+            <h3>How to Use</h3>
+            <div className="step">
+              <img src={step1Image} alt="Step 1" className="step-image" />
+              <p>1. Upload an image of a crop leaf.</p>
+            </div>
+            <div className="step">
+              <img src={step2Image} alt="Step 2" className="step-image" />
+              <p>2. Click 'Predict Disease' to analyze the image.</p>
+            </div>
+            <div className="step">
+              <img src={step3Image} alt="Step 3" className="step-image" />
+              <p>3. View the results and suggested treatments.</p>
+            </div>
           </div>
-          <div className="step">
-            <img src={step2Image} alt="Step 2" className="step-image" />
-            <p>2. Click 'Predict Disease' to analyze the image.</p>
-          </div>
-          <div className="step">
-            <img src={step3Image} alt="Step 3" className="step-image" />
-            <p>3. View the results and suggested treatments.</p>
-          </div>
-        </div>
+        )}
         <div className="upload-container">
           <input
             type="file"
@@ -279,9 +280,13 @@ const App = () => {
 
         <div className="learn-more">
           <h3>Learn More</h3>
-          <a href="https://eos.com/blog/crop-diseases/" target="_blank" rel="noopener noreferrer">
+          <a href="https://example.com/crop-diseases" target="_blank" rel="noopener noreferrer">
             Read about common crop diseases
           </a>
+        </div>
+
+        <div className="upload-count">
+          <p>You've analyzed <strong>{uploadCount}</strong> images so far. Keep it up!</p>
         </div>
 
         <button className="reset-button" onClick={handleReset}>
