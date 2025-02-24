@@ -283,20 +283,24 @@
 }
 
 .how-to-use-section {
-  position: fixed;
-  top: 0;
-  right: -400px;
-  width: 350px;
-  height: 100%;
+  margin-top: 20px;
   background: var(--cardBackground);
-  box-shadow: -4px 0 15px rgba(0, 0, 0, 0.1);
   padding: 20px;
-  transition: right 0.5s ease;
-  z-index: 1000;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: left;
+  width: 100%;
+  max-width: 500px;
+  opacity: 1; 
+  transition: opacity 0.5s ease;
 }
 
-.how-to-use-section.slide-in {
-  right: 0;
+.how-to-use-section.fade-in {
+  opacity: 1; /* Ensure it's visible when faded in */
+}
+
+.step {
+  margin-bottom: 15px;
 }
 
 .step {
@@ -326,7 +330,7 @@
 .how-to-use-section.slide-in + .overlay {
   display: block;
 }
-/* Upload Count Section */
+
 .upload-count {
   margin-top: 20px;
   font-size: 1.1rem;

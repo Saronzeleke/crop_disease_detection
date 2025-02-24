@@ -3,12 +3,8 @@ import axios from "axios";
 import { Cropper } from "react-cropper";
 import "cropperjs/dist/cropper.css";
 import Confetti from "react-confetti";
-import "./App.css"; 
+import "./App.css"; // Import the CSS file
 import { lightTheme, darkTheme } from "./Theme";
-
-import step1Image from "C:/Users/USER/Desktop/advacecrop/prdict.jpg"; 
-import step2Image from "C:/Users/USER/Desktop/advacecrop/report.jpg";
-import step3Image from "C:/Users/USER/Desktop/advacecrop/uplode.jpg"; 
 
 const App = () => {
   const [file, setFile] = useState(null);
@@ -18,7 +14,7 @@ const App = () => {
   const [error, setError] = useState(null);
   const [darkMode, setDarkMode] = useState(false);
   const [croppedImage, setCroppedImage] = useState(null);
-  const [uploadCount, setUploadCount] = useState(0); 
+  const [uploadCount, setUploadCount] = useState(0);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [history, setHistory] = useState([]);
   const [currentTip, setCurrentTip] = useState("");
@@ -31,7 +27,7 @@ const App = () => {
     "Fun Fact: Some plants release chemicals to repel pests naturally!",
   ];
 
-
+  // Load dark mode preference from localStorage
   useEffect(() => {
     const savedDarkMode = localStorage.getItem("darkMode") === "true";
     setDarkMode(savedDarkMode);
@@ -49,9 +45,9 @@ const App = () => {
       setPreview(URL.createObjectURL(selectedFile));
       setPrediction(null);
       setError(null);
-      setUploadCount((prev) => prev + 1); // Increment upload count
+      setUploadCount((prev) => prev + 1);
 
-     
+      // Simulate upload progress
       let progress = 0;
       const interval = setInterval(() => {
         progress += 10;
@@ -88,8 +84,8 @@ const App = () => {
 
       setPrediction(response.data);
       setHistory((prev) => [...prev, response.data]);
-      setShowCelebration(true); 
-      setTimeout(() => setShowCelebration(false), 5000); 
+      setShowCelebration(true); // Trigger celebration animation
+      setTimeout(() => setShowCelebration(false), 5000); // Hide celebration after 5 seconds
     } catch (err) {
       setError("Failed to get prediction. Please try again.");
     } finally {
@@ -139,7 +135,7 @@ const App = () => {
     setError(null);
     setHistory([]);
     setUploadProgress(0);
-    setUploadCount(0); 
+    setUploadCount(0); // Reset upload count
   };
 
   const refreshTip = () => {
@@ -148,9 +144,11 @@ const App = () => {
   };
 
   const toggleHowToUse = () => {
+    console.log("Toggling How to Use section. Current state:", showHowToUse);
     setShowHowToUse(!showHowToUse);
   };
 
+  // Apply theme variables to the root element
   useEffect(() => {
     const root = document.documentElement;
     const theme = darkMode ? darkTheme : lightTheme;
@@ -165,7 +163,7 @@ const App = () => {
     <div className="container">
       <nav className="navbar">
         <button className="toggle-button" onClick={toggleDarkMode} title="Switch to Dark Mode">
-          {darkMode ? "🌞" : "🌙 "}
+          {darkMode ? "🌞 Light Mode" : "🌙 Dark Mode"}
         </button>
       </nav>
       <div className="content">
@@ -183,15 +181,12 @@ const App = () => {
           <div className="how-to-use-section fade-in">
             <h3>How to Use</h3>
             <div className="step">
-              <img src={step1Image} alt="Step 1" className="step-image" />
               <p>1. Upload an image of a crop leaf.</p>
             </div>
             <div className="step">
-              <img src={step2Image} alt="Step 2" className="step-image" />
               <p>2. Click 'Predict Disease' to analyze the image.</p>
             </div>
             <div className="step">
-              <img src={step3Image} alt="Step 3" className="step-image" />
               <p>3. View the results and suggested treatments.</p>
             </div>
           </div>
