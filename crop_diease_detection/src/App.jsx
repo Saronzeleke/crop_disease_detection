@@ -15,6 +15,9 @@ const App = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [croppedImage, setCroppedImage] = useState(null);
   const [uploadCount, setUploadCount] = useState(0);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [history, setHistory] = useState([]);
+  const [currentTip, setCurrentTip] = useState("");
 
   const farmingTips = [
     "Did you know? Rotating crops can help prevent soil-borne diseases.",
@@ -22,12 +25,11 @@ const App = () => {
     "Fun Fact: Some plants release chemicals to repel pests naturally!",
   ];
 
-  const randomTip = farmingTips[Math.floor(Math.random() * farmingTips.length)];
-
   // Load dark mode preference from localStorage
   useEffect(() => {
     const savedDarkMode = localStorage.getItem("darkMode") === "true";
     setDarkMode(savedDarkMode);
+    setCurrentTip(farmingTips[Math.floor(Math.random() * farmingTips.length)]);
   }, []);
 
   const handleFileChange = (e) => {
@@ -42,6 +44,14 @@ const App = () => {
       setPrediction(null);
       setError(null);
       setUploadCount((prev) => prev + 1);
+
+      // Simulate upload progress
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += 10;
+        setUploadProgress(progress);
+        if (progress >= 100) clearInterval(interval);
+      }, 200);
     }
   };
 
@@ -71,6 +81,7 @@ const App = () => {
       });
 
       setPrediction(response.data);
+      setHistory((prev) => [...prev, response.data]);
     } catch (err) {
       setError("Failed to get prediction. Please try again.");
     } finally {
@@ -84,12 +95,47 @@ const App = () => {
     setCroppedImage(null);
     setPrediction(null);
     setError(null);
+    setUploadProgress(0);
   };
 
   const toggleDarkMode = () => {
     const newDarkMode = !darkMode;
     setDarkMode(newDarkMode);
     localStorage.setItem("darkMode", newDarkMode);
+  };
+
+  const handleFeedback = (isHelpful) => {
+    alert(`Thank you for your feedback! You selected: ${isHelpful ? "Helpful" : "Not Helpful"}`);
+  };
+
+  const handleShare = () => {
+    const text = `I just detected a crop disease using this app! Disease: ${prediction.predicted_disease}, Confidence: ${(prediction.confidence * 100).toFixed(2)}%.`;
+    navigator.clipboard.writeText(text);
+    alert("Results copied to clipboard!");
+  };
+
+  const handleDownloadReport = () => {
+    const text = `Crop Disease Detection Report\n\nDisease: ${prediction.predicted_disease}\nConfidence: ${(prediction.confidence * 100).toFixed(2)}%\nTreatment: ${prediction.treatment}`;
+    const blob = new Blob([text], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "crop_disease_report.txt";
+    link.click();
+  };
+
+  const handleReset = () => {
+    setFile(null);
+    setPreview(null);
+    setPrediction(null);
+    setError(null);
+    setHistory([]);
+    setUploadProgress(0);
+  };
+
+  const refreshTip = () => {
+    const newTip = farmingTips[Math.floor(Math.random() * farmingTips.length)];
+    setCurrentTip(newTip);
   };
 
   // Apply theme variables to the root element
@@ -106,14 +152,23 @@ const App = () => {
   return (
     <div className="container">
       <nav className="navbar">
-        <button className="toggle-button" onClick={toggleDarkMode}>
-          {darkMode ? "🌞" : "🌙"}
+        <button className="toggle-button" onClick={toggleDarkMode} title="Switch to Dark Mode">
+          {darkMode ? "🌞 Light Mode" : "🌙 Dark Mode"}
         </button>
       </nav>
       <div className="content">
         <h1 className="title">Crop Disease Detection</h1>
         <div className="tip-container">
-          <p className="tip-text">{randomTip}</p>
+          <p className="tip-text">{currentTip}</p>
+          <button className="refresh-tip-button" onClick={refreshTip}>
+            New Tip
+          </button>
+        </div>
+        <div className="help-section">
+          <h3>How to Use</h3>
+          <p>1. Upload an image of a crop leaf.</p>
+          <p>2. Click 'Predict Disease' to analyze the image.</p>
+          <p>3. View the results and suggested treatments.</p>
         </div>
         <div className="upload-container">
           <input
@@ -122,6 +177,11 @@ const App = () => {
             onChange={handleFileChange}
             className="file-input"
           />
+          {file && (
+            <div className="progress-bar-container">
+              <div className="progress-bar" style={{ width: `${uploadProgress}%` }}></div>
+            </div>
+          )}
           {preview && (
             <Cropper
               src={preview}
@@ -149,6 +209,8 @@ const App = () => {
           )}
         </div>
 
+        {loading && <p className="loading-message">Analyzing your image... Please wait.</p>}
+
         {prediction && (
           <>
             <Confetti
@@ -167,18 +229,43 @@ const App = () => {
               <p className="result-text">
                 <strong>Treatment:</strong> {prediction.treatment}
               </p>
-              <p className="description">
-                {prediction.description || "No additional information available."}
-              </p>
+              <div className="feedback-container">
+                <p>Was this prediction helpful?</p>
+                <button onClick={() => handleFeedback(true)}>Yes</button>
+                <button onClick={() => handleFeedback(false)}>No</button>
+              </div>
+              <button className="share-button" onClick={handleShare}>
+                Share Results
+              </button>
+              <button className="download-button" onClick={handleDownloadReport}>
+                Download Report
+              </button>
             </div>
           </>
         )}
 
         {error && <p className="error-text">{error}</p>}
 
-        <div className="progress-container">
-          <p>You've analyzed {uploadCount} images so far. Keep it up!</p>
+        <div className="history-container">
+          <h3>Prediction History</h3>
+          {history.map((item, index) => (
+            <div key={index} className="history-item">
+              <p><strong>Disease:</strong> {item.predicted_disease}</p>
+              <p><strong>Confidence:</strong> {(item.confidence * 100).toFixed(2)}%</p>
+            </div>
+          ))}
         </div>
+
+        <div className="learn-more">
+          <h3>Learn More</h3>
+          <a href="https://example.com/crop-diseases" target="_blank" rel="noopener noreferrer">
+            Read about common crop diseases
+          </a>
+        </div>
+
+        <button className="reset-button" onClick={handleReset}>
+          Reset All
+        </button>
       </div>
     </div>
   );
