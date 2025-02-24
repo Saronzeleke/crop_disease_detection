@@ -6,9 +6,9 @@ import Confetti from "react-confetti";
 import "./App.css"; 
 import { lightTheme, darkTheme } from "./Theme";
 
-import step1Image from "./step1.png"; 
-import step2Image from "./step2.png";
-import step3Image from "./step3.png"; 
+import step1Image from "C:/Users/USER/Desktop/advacecrop/prdict.jpg"; 
+import step2Image from "C:/Users/USER/Desktop/advacecrop/report.jpg";
+import step3Image from "C:/Users/USER/Desktop/advacecrop/uplode.jpg"; 
 
 const App = () => {
   const [file, setFile] = useState(null);
