@@ -231,8 +231,8 @@ const App = () => {
               </p>
               <div className="feedback-container">
                 <p>Was this prediction helpful?</p>
-                <button onClick={() => handleFeedback(true)}>Yes</button>
-                <button onClick={() => handleFeedback(false)}>No</button>
+                <button classname="button" onClick={() => handleFeedback(true)}>Yes</button>
+                <button  classname="button" onClick={() => handleFeedback(false)}>No</button>
               </div>
               <button className="share-button" onClick={handleShare}>
                 Share Results
