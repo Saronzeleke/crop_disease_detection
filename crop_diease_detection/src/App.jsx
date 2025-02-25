@@ -135,7 +135,7 @@ const App = () => {
     setError(null);
     setHistory([]);
     setUploadProgress(0);
-    setUploadCount(0); // Reset upload count
+    setUploadCount(0); 
   };
 
   const refreshTip = () => {
@@ -163,7 +163,7 @@ const App = () => {
     <div className="container">
       <nav className="navbar">
         <button className="toggle-button" onClick={toggleDarkMode} title="Switch to Dark Mode">
-          {darkMode ? "🌞 Light Mode" : "🌙 Dark Mode"}
+          {darkMode ? "🌞" : "🌙"}
         </button>
       </nav>
       <div className="content">

@@ -161,7 +161,7 @@
 .button:disabled {
   background: #bdc3c7;
   cursor: not-allowed;
-  animation: none; /* Disable animation when button is disabled */
+  animation: none;
 }
 .remove-button:hover {
   background: #c0392b;
@@ -174,7 +174,7 @@
 
 .share-button,
 .download-button {
-  background: #2ecc71; /* Green for positive actions */
+  background: #2ecc71;
 }
 
 .share-button:hover,
@@ -228,7 +228,6 @@
   margin-top: 20px;
   font-size: 1rem;
 }
-/* Need More Button */
 .need-more-button {
   padding: 10px 20px;
   background: var(--buttonBackground);
@@ -244,7 +243,6 @@
   background: var(--buttonHover);
 }
 
-/* How to Use Section */
 .how-to-use-section {
   margin-top: 20px;
   background: var(--cardBackground);
