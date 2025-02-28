@@ -10,22 +10,21 @@ import tensorflow as tf
 import os
 import logging
 
-# Initialize Flask app
 app = Flask(__name__)
-CORS(app)  # Enable CORS
+CORS(app)  
 
-# Rate limiting
+
 limiter = Limiter(
     app=app,
     key_func=get_remote_address,
     default_limits=["200 per day", "50 per hour"]
 )
 
-# Logging setup
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Database setup
+
 DATABASE = os.getenv("DATABASE", "crop_disease.db")
 
 def init_db():
@@ -45,7 +44,6 @@ def init_db():
 
 init_db()
 
-# Swagger setup
 SWAGGER_URL = "/api/docs"
 API_URL = "/static/swagger.json"
 swaggerui_blueprint = get_swaggerui_blueprint(
@@ -53,7 +51,7 @@ swaggerui_blueprint = get_swaggerui_blueprint(
 )
 app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
 
-# Load the pre-trained model
+
 
 MODEL_PATH = os.getenv("MODEL_PATH", "crop_disease_model.h5")
 try:
@@ -63,7 +61,6 @@ except Exception as e:
     logger.error(f"Error loading model: {e}")
     model = None
 
-# Define class labels and treatment recommendations
 CLASS_LABELS = ["Healthy", "Powdery Mildew", "Leaf Spot", "Blight", "Rust"]
 TREATMENTS = {
     "Powdery Mildew": "Apply fungicides like sulfur or potassium bicarbonate.",
@@ -73,13 +70,11 @@ TREATMENTS = {
     "Healthy": "No treatment needed. Your crop is healthy!",
 }
 
-# Allowed file extensions
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"}
 
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# Image preprocessing
 def preprocess_image(image, target_size=(224, 224)):
     if image.mode != "RGB":
         image = image.convert("RGB")
@@ -88,7 +83,7 @@ def preprocess_image(image, target_size=(224, 224)):
     image = np.expand_dims(image, axis=0)
     return image
 
-# Save prediction to database
+
 def save_prediction(filename, disease, confidence):
     with sqlite3.connect(DATABASE) as conn:
         conn.execute(
@@ -100,7 +95,7 @@ def save_prediction(filename, disease, confidence):
         )
         conn.commit()
 
-# API endpoint for disease prediction
+
 @app.route("/predict", methods=["POST"])
 @limiter.limit("10 per minute")
 def predict():
@@ -122,12 +117,10 @@ def predict():
         return jsonify({"error": "Model not available"}), 500
 
     try:
-        # Process image
+
         image = Image.open(file.stream)
         processed_image = preprocess_image(image)
         logger.info(f"Processed image shape: {processed_image.shape}")
-
-        # Make prediction
         predictions = model.predict(processed_image)
         logger.info(f"Model predictions: {predictions}")
 
@@ -135,17 +128,17 @@ def predict():
         predicted_class = CLASS_LABELS[predicted_class_index]
         confidence = float(predictions[0][predicted_class_index])
 
-        # Handle low-confidence predictions
-        if confidence < 0.5:  # Adjust the threshold as needed
+        
+        if confidence < 0.5:  
             predicted_class = "Healthy"
             confidence = 1.0
 
         logger.info(f"Predicted class: {predicted_class}, Confidence: {confidence}")
 
-        # Save prediction to database
+        
         save_prediction(file.filename, predicted_class, confidence)
 
-        # Return prediction and treatment
+        
         return jsonify({
             "predicted_disease": predicted_class,
             "confidence": confidence,
@@ -156,7 +149,7 @@ def predict():
         logger.error(f"Prediction failed: {e}")
         return jsonify({"error": f"Prediction failed: {str(e)}"}), 500
 
-# API endpoint for feedback
+
 @app.route("/feedback", methods=["POST"])
 def feedback():
     data = request.json
@@ -186,16 +179,14 @@ def feedback():
         logger.error(f"Feedback submission failed: {e}")
         return jsonify({"error": str(e)}), 500
 
-# Serve Swagger JSON
+
 @app.route("/static/swagger.json")
 def serve_swagger():
     return send_from_directory("static", "swagger.json")
 
-# Health check endpoint
+
 @app.route("/health", methods=["GET"])
 def health_check():
     return jsonify({"status": "healthy"})
-
-# Run the app
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
